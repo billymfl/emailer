@@ -10,7 +10,7 @@
 
 const env = require('dotenv').config();
 if (env.error) {
-  throw env.error;
+  console.error('No .env file found or error trying to parse it.');
 }
 const pkg = require('./package');
 const Joi = require('@hapi/joi');
