@@ -1,25 +1,30 @@
 {
-  "name": "simple-microservices-template",
+  "name": "emailer",
   "version": "1.0.0",
-  "description": "App description",
+  "description": "emailer is a microservice that handles sending an email to a customer using the selected API email service. An secondary API email service can be defined to handle failover.",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test HOST=0.0.0.0 PORT=88 nyc ./node_modules/mocha/bin/mocha --exit",
+    "test": "./mocha-test.sh",
     "start": "node server"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/billymfl/simple-microservices-template.git"
+    "url": "git+https://github.com/billymfl/emailer.git"
   },
   "keywords": [
-    "microservice"
+    "microservice",
+    "Email",
+    "Emailer",
+    "Service",
+    "Failover",
+    "API"
   ],
   "author": "Billy Marin",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/billymfl/simple-microservices-template/issues"
+    "url": "https://github.com/billymfl/emailer/issues"
   },
-  "homepage": "https://github.com/billymfl/simple-microservices-template#readme",
+  "homepage": "https://github.com/billymfl/emailer#readme",
   "devDependencies": {
     "chai": "^4.2.0",
     "eslint": "^6.3.0",
@@ -34,6 +39,8 @@
     "axios": "^0.19.0",
     "debug": "^4.1.1",
     "dotenv": "^8.1.0",
-    "hapi-swagger": "^10.1.1"
+    "hapi-swagger": "^10.1.1",
+    "qs": "^6.9.0",
+    "striptags": "^3.1.1"
   }
 }

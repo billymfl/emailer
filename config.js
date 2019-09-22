@@ -8,6 +8,10 @@
  *
  */
 
+const env = require('dotenv').config();
+if (env.error) {
+  throw env.error;
+}
 const pkg = require('./package');
 const Joi = require('@hapi/joi');
 
@@ -19,9 +23,14 @@ exports.VERSION = pkg.version;
 exports.debug = require('debug')(exports.APPNAME);
 
 // define the schema of the environment variables
-const schema = Joi.object().keys({
+const schema = Joi.object({
   PORT: Joi.number().integer().min(80).max(65535).default(80),
   HOST: Joi.string().hostname().default('0.0.0.0'),
+  SERVICES: Joi.string().required(),
+  MAILGUN_API: Joi.string(),
+  MAILGUN_DOMAIN: Joi.string(),
+  MAILJET_API: Joi.string(),
+  TIMEOUT: Joi.number().integer().min(1).default(2),
 });
 
 // if there is a validation error set _error, else assign env vars. usually we should exit on error.
@@ -32,6 +41,8 @@ if (result.error) {
       .join('.\n');
 } else {
   // do any other processing here on the variables before they are assigned to the exports
+  const rv = result.value;
+  rv.SERVICES = rv.SERVICES.split(',');
 
   Object.assign(exports, result.value);
 }

@@ -1,10 +1,20 @@
+
+// const path = require('path');
+// const dotEnvPath = path.resolve('./test/.env');
+// const env = require('dotenv').config({path: dotEnvPath});
+
 const chai = require('chai');
 const pkg = require('../package');
-const {NODE_ENV, HOST, PORT, APPNAME, VERSION, _error} = require('../config');
+const {NODE_ENV, HOST, PORT, APPNAME, VERSION, SERVICES,
+  MAILGUN_API, MAILJET_API, MAILGUN_DOMAIN, _error} = require('../config');
 
 const assert = chai.assert;
 
 describe('config', function() {
+  // it('should not throw error', function() {
+  //   assert.equal(env.error, undefined);
+  // });
+
   it('_error should be undefined', function() {
     assert.equal(_error, undefined);
   });
@@ -27,5 +37,21 @@ describe('config', function() {
 
   it('PORT value should be set', function() {
     assert.equal(PORT, 88);
+  });
+
+  it('SERVICES should be an array', function() {
+    assert.isArray(SERVICES);
+  });
+
+  it('SERVICES should have min of 2 SERVICES', function() {
+    assert.lengthOf(SERVICES, 2);
+  });
+
+  it('MAILGUN_API should be set', function() {
+    assert.isNotEmpty(MAILGUN_API);
+  });
+
+  it('MAILJET_API should be set', function() {
+    assert.isNotEmpty(MAILJET_API);
   });
 });

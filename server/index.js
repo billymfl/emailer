@@ -9,14 +9,16 @@
  *
  */
 
-require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const HapiSwagger = require('hapi-swagger');
 const Inert = require('@hapi/inert');
 const Vision = require('@hapi/vision');
 const routes = require('../modules/routes');
+const EmailService = require('../modules/EmailService');
+
 // load the config
-const {NODE_ENV, APPNAME, VERSION, PORT, HOST, _error} = require('../config');
+const {NODE_ENV, APPNAME, VERSION, PORT, HOST, SERVICES,
+  MAILGUN_API, MAILGUN_DOMAIN, MAILJET_API, _error} = require('../config');
 
 // if there is a missing required or misconfigured env vars then we should exit
 if (_error !== undefined) {
@@ -32,7 +34,7 @@ const swaggerOptions = {
   info: {
     title: 'API Documentation',
     version: VERSION,
-    description: 'Microservice template',
+    description: 'Emailer microservice API',
   },
   schemes: ['http', 'https'], // http for testing
   reuseDefinitions: false,
@@ -60,6 +62,8 @@ const init = async () => {
 
   server.route(routes);
   // other init...
+  const config = {SERVICES, MAILGUN_API, MAILGUN_DOMAIN, MAILJET_API};
+  EmailService.init(config);
 };
 
 process.on('unhandledRejection', async (err) => {

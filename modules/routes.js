@@ -18,6 +18,7 @@ const routes = [
       tags: ['api'],
     },
   },
+
   {// healthcheck route
     method: 'GET',
     path: '/healthcheck',
@@ -27,6 +28,7 @@ const routes = [
       tags: ['api'],
     },
   },
+
   {// a private route for testing the circuit breaker
     method: 'POST',
     path: '/mock-test-circuitbreaker-failover',
@@ -35,34 +37,23 @@ const routes = [
       description: 'Route used for testing the circuitbreaker by test suite',
     },
   },
-  {// sample GET route showing input param and validation on it
-    method: 'GET',
-    path: '/hello/{name}',
-    options: {
-      handler: handlers.hello,
-      description: 'sample POST route',
-      tags: ['api'],
-      validate: {
-        params: {
-          name: Joi.string().min(3).max(10),
-        },
-      },
-    },
-  },
-  {// sample POST with validation of input payload
+
+  {// POST /email with validation of input payload
     method: 'POST',
-    path: '/post',
+    path: '/email',
     options: {
-      handler: function(request, h) {
-        return 'Blog post added';
-      },
-      description: 'sample POST route',
+      handler: handlers.email,
+      description: 'Handle requests for sending an email',
       tags: ['api'],
       validate: {
         payload: Joi.object({
-          post: Joi.string().min(1).max(140),
-          date: Joi.date().required(),
-        }).label('Blog'),
+          to: Joi.string().email().required(),
+          to_name: Joi.string().required(),
+          from: Joi.string().email().required(),
+          from_name: Joi.string().required(),
+          subject: Joi.string().required(),
+          body: Joi.string().required(),
+        }).label('Email'),
       },
     },
   },

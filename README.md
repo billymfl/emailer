@@ -1,30 +1,40 @@
 ![Logo of the project](https://localhost/sample-logo.png)
 
-# Name of the project
+# Emailer
 > Additional information or tagline
 
-Microservices template for quick prototyping and rapid application development.
+EmailService is a microservice that handles sending email via an email provider. A list of SERVICES and their API keys should be passed in. If more than one provider is passed in they will act as failovers in the order they were passed in.
 
-* dotenv is used to load environment variables from .env file into process.env. The .env file should not be committed to a repo as it might contain secrets.
+The failover is handled by a circuit breaker.
+
+* dotenv is used to load environment variables from .env file into process.env. The .env file should not be committed to a repo.
  *  The testing library are mocha and chai.
  *  Linting with eslint configured with the google style.
-
+ *  Services used for testing are: [MailGun](https://www.mailgun.com) and [MailJet](https://www.mailjet.com). For the tests to pass set appripriate to/from email addresses. For MailGun the additional step of registering and validating a 'to' email address has to be done in their dashboard.
 ## Installing / Getting started
 
-A quick introduction of the minimal setup you need to get a hello world up &
-running.
-
+Installing locally
 ```bash
 npm install
+```
+
+Before starting, view the env.example file for the required env vars that need to be setup, and create an .env file.
+
+```bash
+cp env.example .env
+```
+
+Edit the .env file and set the SERVICES and the required options for the service listed. Then start up the app.
+
+```bash
 npm start
 ```
 
-Here you should say what actually happens when you execute the code above.
+Once started the service should be listening on the specified PORT and the SERVICES should be registered.
 
 ### Initial Configuration
 
-Some projects require initial configuration (e.g. access tokens or keys, `npm i`).
-This is the section where you would document those requirements.
+The .env file should be configured with a list of the email api SERVICES to use for sending an email. If more than one SERVICES is listed then the they will be tried in order if one fails.
 
 ## Developing
 
@@ -32,37 +42,51 @@ Here's a brief intro about what a developer must do in order to start developing
 the project further:
 
 ```shell
-git clone https://github.com/billymfl/awesome-project.git
-cd awesome-project/
-npm install
+git clone https://github.com/billymfl/emailer.git
+cd emailer/
+npm i
 ```
 
-And state what happens step-by-step.
+Add new services to the modules/services folder by implementing the Emailer interface. An api service must implement the following methods:
+- getName() string - return the name of the service.
+- buildRequest(object) object - build the request object which includes the method, url, and data used to call the service.
+- isSuccess(object) bool - validate the success response we expect from the service.
 
-### Building
+Configure the service in the constructor with any api keys and other options required for the service. These should be passed in the .env file and config.js should be edited to validate the vars. See the Mailgun and Mailjet services in the services folder for examples of how to add a new service.
 
-If billymfl project needs some additional steps for the developer to build the
-project after some code changes, state them here:
+Make sure to add a test to the test folder for the service you added.
+
+### Testing
 
 ```bash
-./configure
-make
-make install
+npm test
 ```
 
-Here again you should state what actually happens when the code above gets
-executed.
+will run the [mocha-test.sh](./mocha-test.sh) file. Edit this file to add any env vars to be used for the tests. 
+
+To run a specific test:
+```bash
+npm test MailGun
+```
+
+will run just the MailGun test
 
 ### Deploying / Publishing
 
-In case there's some step you have to take that publishes this project to a
-server, this is the right time to state it.
+When running the app the required env vars must be passed via the runtime's environment (Docker, AWS, etc)
+
+To build the docker image (set the appropriate names for app:version)
 
 ```bash
 docker build -t app:version .
 ```
 
-And again you'd need to tell what the previous code actually does.
+Will build the docker image app:version, with NODE_ENV var set to production.
+
+Run an instance of the app, with ```<SERVICES>``` replaced with actual values to the services to use and provide any other config options needed for the services:
+```bash
+docker run --rm --name emailservice -p 80:80 -e SERVICES=<SERVICES> app:version
+```
 
 ## Features
 
@@ -73,59 +97,93 @@ What's all the bells and whistles this project can perform?
 
 ## Configuration
 
-Here you should write what are all of the configurations a user can enter when
-using the project.
+The required and optional variables the app uses. These should be placed in a .env file. When the app is loaded the file is read to validate and populate process.env with the variables. Note: As these are environment variables these can also be passed via the shell's/runtime's environment. Passing via .env file is preferred.
 
-#### Argument 1
+#### HOST
 Type: `String`  
-Default: `'default value'`
+Default: `'0.0.0.0'`
 
-State what an argument does and how you can use it. If needed, you can provide
-an example below.
+The hostname. Defaults to 0.0.0.0 so it can bind to a docker container.
 
 Example:
 ```bash
-awesome-project "Some other value"  # Prints "You're nailing this readme!"
+HOST="test.com"
 ```
 
-#### Argument 2
-Type: `Number|Boolean`  
-Default: 100
+#### PORT
+Type: `Number`  
+Default: 80
 
-Copy-paste as many of these as you need.
+The port to listen on.
 
-## Contributing
+Example:
+```bash
+PORT=88
+```
 
-When you publish something open source, one of the greatest motivations is that
-anyone can just jump in and start contributing to billymfl project.
+#### SERVICES
+Type: `string`  
+Default: none  
+Required
 
-These paragraphs are meant to welcome those kind souls to feel that they are
-needed. You should state something like:
+Comma delimited list of email api services to use.
 
-"If you'd like to contribute, please fork the repository and use a feature
-branch. Pull requests are warmly welcome."
+Example:
+```bash
+SERVICES=mailgun,mailjet
+```
 
-If there's anything else the developer needs to know (e.g. the code style
-guide), you should link it here. If there's a lot of things to take into
-consideration, it is common to separate this section to its own file called
-`CONTRIBUTING.md` (or similar). If so, you should say that it exists here.
+#### MAILGUN_API
+Type: `string`  
+Default: none  
+Required if 'mailgun' is listed in SERVICES
+
+The api key for mailgun
+
+Example:
+```bash
+MAILGUN_API=abc
+```
+
+#### MAILGUN_DOMAIN
+Type: `string`  
+Default: none  
+Required if 'mailgun' is listed in SERVICES
+
+Your api domain for mailgun
+
+Example:
+```bash
+MAILGUN_DOMAIN=blah
+```
+
+#### MAILJET_API
+Type: `string`  
+Default: none  
+Required if 'mailjet' is listed in SERVICES
+
+The api key for mailjet
+
+Example:
+```bash
+MAILJET_API=abc
+```
+
+#### TIMEOUT
+Type: `number`  
+Default: 2
+
+How long before timing out a service call, in seconds
+
+Example:
+```bash
+TIMEOUT=2
+```
 
 ## Links
 
-Even though this information can be found inside the project on machine-readable
-format like in a .json file, it's good to include a summary of most useful
-links to humans using billymfl project. You can include links like:
-
-- Project homepage: https://billymfl.github.com/awesome-project/
-- Repository: https://github.com/billymfl/awesome-project/
-- Issue tracker: https://github.com/billymfl/awesome-project/issues
-  - In case of sensitive bugs like security vulnerabilities, please contact
-    my@email.com directly instead of using issue tracker. We value billymfl effort
-    to improve the security and privacy of this project!
-- Related projects:
-  - billymfl other project: https://github.com/billymfl/other-project/
-  - Someone else's project: https://github.com/billymfl/simple-microservice-template/
-
+- Repository: https://github.com/billymfl/emailer
+- Issue tracker: https://github.com/billymfl/emailer/issues
 
 ## Licensing
 

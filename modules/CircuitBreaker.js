@@ -83,6 +83,7 @@ class CircuitBreaker {
     requestOptions.timeout = this.requestTimeout * 1000;
 
     try {
+      debug('TCL: CircuitBreaker -> callService -> requestOptions', requestOptions);
       const response = await axios(requestOptions);
 
       debug('TCL: CircuitBreaker -> callService -> response', response);
@@ -92,7 +93,7 @@ class CircuitBreaker {
       this._onSuccess(endpoint);
       return {statusCode: response.status, data: response.data};
     } catch (err) {
-      // debug('TCL: CircuitBreaker -> callService -> err', err);
+      debug('TCL: CircuitBreaker -> callService -> err', err.message);
       this._onFailure(endpoint);
       return false;
     }
@@ -128,7 +129,9 @@ class CircuitBreaker {
    * @return {boolean} true if circuit is closed or half open, false otherwise
    */
   _canRequest(endpoint) {
+    debug('TCL: CircuitBreaker -> _canRequest -> this.states', this.states);
     if (!this.states[endpoint]) this._initState(endpoint);
+    debug('TCL: CircuitBreaker -> _canRequest -> this.states[endpoint]', this.states[endpoint]);
     const state = this.states[endpoint];
     if (state.circuit === 'CLOSED') return true;
     const now = new Date() / 1000;
