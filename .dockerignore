@@ -2,6 +2,7 @@ node_modules
 logs
 npm-debug.log
 env.example
+.env
 test
 .eslintrc.js
 .gitignore

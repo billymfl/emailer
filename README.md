@@ -83,9 +83,9 @@ docker build -t app:version .
 
 Will build the docker image app:version, with NODE_ENV var set to production.
 
-Run an instance of the app, with ```<SERVICES>``` replaced with actual values to the services to use and provide any other config options needed for the services:
+Run an instance of the app using a .env mounted from the current directory:
 ```bash
-docker run --rm --name emailservice -p 80:80 -e SERVICES=<SERVICES> app:version
+docker run --rm --name emailservice -p 80:80 --mount type=bind,src="$(pwd)/.env",dst=/usr/src/app/.env app:version
 ```
 
 ## Features
