@@ -38,7 +38,6 @@ describe('new EmailService()', function() {
     assert.isNotEmpty(EmailService.services);
   });
 
-  //
   it('should format the body by stripping out html', function() {
     const result = EmailService.format({body: data.body});
     assert.equal(result.body, '\nYour Bill\n\n$10\n');
