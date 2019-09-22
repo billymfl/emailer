@@ -55,6 +55,12 @@ const routes = [
           body: Joi.string().required(),
         }).label('Email'),
       },
+      response: {
+        schema: Joi.object({
+          status: Joi.number(),
+          message: Joi.string(),
+        }).label('Response'),
+      },
     },
   },
 ];

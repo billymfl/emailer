@@ -100,6 +100,10 @@ class EmailService {
       const res = await this.circuitBreaker.callService(serviceRequest);
       // debug('TCL: EmailService -> send -> res', res);
 
+      // TODO handle rate limits by the service
+      // TODO log email request and response
+      // TODO make sure no email fails
+
       // if successfully called this service then exit loop
       if (res) {
         console.log('code', res.statusCode);

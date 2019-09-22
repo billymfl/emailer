@@ -1,11 +1,12 @@
-![Logo of the project](https://localhost/sample-logo.png)
 
 # Emailer
 > Additional information or tagline
 
-EmailService is a microservice that handles sending email via an email provider. A list of SERVICES and their API keys should be passed in. If more than one provider is passed in they will act as failovers in the order they were passed in.
+EmailService is a microservice that handles sending email via an email provider. A list of SERVICES and their API keys should be passed in. If more than one provider is passed in they will act as failovers in the order they were passed in. 
 
 The failover is handled by a circuit breaker.
+
+This service is meant to be run internally and consumed by other internal services so no API key is required.
 
 * dotenv is used to load environment variables from .env file into process.env. The .env file should not be committed to a repo.
  *  The testing library are mocha and chai.
@@ -18,7 +19,7 @@ Installing locally
 npm install
 ```
 
-Before starting, view the env.example file for the required env vars that need to be setup, and create an .env file.
+Before starting the app, view the env.example file for the required env vars that need to be setup, and create an .env file.
 
 ```bash
 cp env.example .env
@@ -34,12 +35,11 @@ Once started the service should be listening on the specified PORT and the SERVI
 
 ### Initial Configuration
 
-The .env file should be configured with a list of the email api SERVICES to use for sending an email. If more than one SERVICES is listed then the they will be tried in order if one fails.
+The .env file should be configured with a list of the email api SERVICES to use for sending an email. If more than one SERVICES is listed then they will be tried in order if one of them fails.
 
 ## Developing
 
-Here's a brief intro about what a developer must do in order to start developing
-the project further:
+To add a service
 
 ```shell
 git clone https://github.com/billymfl/emailer.git
@@ -90,8 +90,7 @@ docker run --rm --name emailservice -p 80:80 -e SERVICES=<SERVICES> app:version
 
 ## Features
 
-What's all the bells and whistles this project can perform?
-* What's the main functionality
+* Uses Hapi as the server, along with Hapi-Swagger to build Swagger API documentation. Run the app and go to GET /documentation to view.
 * You can also do another thing
 * If you get really randy, you can even do this
 
