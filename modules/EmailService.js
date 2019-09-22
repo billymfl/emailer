@@ -32,10 +32,9 @@ class EmailService {
     // const routesConfig = {EmailService: this, accessControlAllowOrigin: '*'};
 
     // let obj;
-    config.SERVICES.forEach((service, index) => {
+    config.SERVICES.forEach((service) => {
       // TODO we can build an endpoint to query this object to see if any service is down
       const obj = {};
-      obj.status = 'active';
 
       switch (service) {
         case 'mailgun':
@@ -45,7 +44,6 @@ class EmailService {
                 domain: config.MAILGUN_DOMAIN,
               }
           );
-
           break;
 
         case 'mailjet':
@@ -53,9 +51,14 @@ class EmailService {
           break;
 
         default:
-          ; // TODO we should have a default service
+          console.error(`Unknown service: ${service}`);
       }
-      this.services.push(obj);
+
+      if (Object.keys(obj).length) {
+        console.log(`Registered ${obj.service.getName()} service`);
+        obj.status = 'active';
+        this.services.push(obj);
+      }
     });
   }
 

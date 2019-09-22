@@ -26,7 +26,7 @@ if (_error !== undefined) {
   process.exit(1);
 }
 
-console.log(`${APPNAME} ${VERSION} is starting in ${NODE_ENV} mode...`);
+console.log(`${APPNAME} v${VERSION} is starting in ${NODE_ENV} mode...`);
 const server = new Hapi.Server({port: PORT, host: HOST});
 
 // build swagger doc, at GET /documentation
@@ -50,6 +50,14 @@ const init = async () => {
     },
   ]);
 
+  const config = {
+    SERVICES,
+    MAILGUN_API,
+    MAILGUN_DOMAIN,
+    MAILJET_API,
+  };
+  EmailService.init(config);
+
   // when requiring this file for testing the server shouldn't be started
   if (!module.parent) {
     try {
@@ -57,13 +65,11 @@ const init = async () => {
     } catch (err) {
       console.error(`Server startup error: ${err.message}`);
     }
-    console.log('Server running on %s', server.info.uri);
+    console.log('Server listening on %s', server.info.uri);
   }
 
   server.route(routes);
   // other init...
-  const config = {SERVICES, MAILGUN_API, MAILGUN_DOMAIN, MAILJET_API};
-  EmailService.init(config);
 };
 
 process.on('unhandledRejection', async (err) => {
