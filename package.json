@@ -4,7 +4,7 @@
   "description": "emailer is a microservice that handles sending an email to a customer using the selected API email service. An secondary API email service can be defined to handle failover.",
   "main": "index.js",
   "scripts": {
-    "test": "./mocha-test.sh",
+    "test": "NODE_ENV=test nyc ./node_modules/mocha/bin/mocha --exit",
     "start": "node server"
   },
   "repository": {

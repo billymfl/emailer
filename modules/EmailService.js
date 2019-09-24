@@ -2,12 +2,13 @@
  * Module for EmailService microservice.
  * EmailService starts up the express app and listens on specified PORT.
  * Config items are passed in to initialize the app.
- * Handles sending email via one of the SERVICES passed in and fails over to another.* round-robined to accept requests.
+ * Handles sending email via one of the SERVICES passed in and fails over
+ * to another.* round-robined to accept requests.
  * @module EmailService
 */
 
-const CircuitBreaker = require('./CircuitBreaker');
 const striptags = require('striptags');
+const CircuitBreaker = require('./CircuitBreaker');
 
 /** Class representing the EmailService. */
 class EmailService {
@@ -27,11 +28,6 @@ class EmailService {
     // setup CircuitBreaker with the provided timeout threshold
     this.circuitBreaker = new CircuitBreaker({timeout: config.TIMEOUT});
 
-    // set up express app and options
-    // setup our routes
-    // const routesConfig = {EmailService: this, accessControlAllowOrigin: '*'};
-
-    // let obj;
     config.SERVICES.forEach((service) => {
       // TODO we can build an endpoint to query this object to see if any service is down
       const obj = {};
