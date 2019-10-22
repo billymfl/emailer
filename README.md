@@ -1,6 +1,6 @@
 
-# Emailer
-> Additional information or tagline
+# WIP: Emailer
+> Work in progress. Refactoring this from a previous code sample. I broke it adding rabbitmq.
 
 EmailService is a microservice that handles sending email via an email provider. A list of SERVICES and their API keys should be passed in. If more than one provider is passed in they will act as failovers in the order they were passed in. 
 
