@@ -4,7 +4,7 @@
  *
 */
 
-const {APPNAME, VERSION} = require('../config');
+const {APPNAME, VERSION, HOST, PORT} = require('../config');
 const EmailService = require('./EmailService');
 
 module.exports = {
@@ -13,7 +13,12 @@ module.exports = {
   },
 
   healthCheck: (request, h) => {
-    return {status: 'ok'};
+    return {
+      hostname: `${HOST}:${PORT}`,
+      runtime: process.version,
+      app_version: VERSION,
+      status: 'ok',
+    };
   },
 
   testCircuitBreaker: async (request, h) => {
